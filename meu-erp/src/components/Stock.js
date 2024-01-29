@@ -1,14 +1,32 @@
 // src/components/Stock.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const Stock = () => {
-  const [items, setItems] = useState([
+  // Função utilitária para recuperar dados do localStorage
+  const getStoredData = (key, defaultValue) => {
+    const storedData = localStorage.getItem(key);
+    return storedData ? JSON.parse(storedData) : defaultValue;
+  };
+
+  // Função utilitária para salvar dados no localStorage
+  const setStoredData = (key, data) => {
+    localStorage.setItem(key, JSON.stringify(data));
+  };
+
+  // Estado inicial carregado do localStorage
+  const initialItems = getStoredData('stockItems', [
     { id: 1, name: 'Malte', quantity: 10 },
     { id: 2, name: 'Lúpulo', quantity: 5 },
     // Adicione mais itens conforme necessário
   ]);
 
+  const [items, setItems] = useState(initialItems);
   const [editingItemId, setEditingItemId] = useState(null);
+
+  useEffect(() => {
+    // Salva os itens no localStorage sempre que houver uma mudança
+    setStoredData('stockItems', items);
+  }, [items]);
 
   const handleAddItem = () => {
     const newItem = { id: items.length + 1, name: 'Novo Item', quantity: 0 };
